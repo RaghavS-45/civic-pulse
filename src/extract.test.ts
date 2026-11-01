@@ -100,3 +100,28 @@ describe("llmFromEnv model fallback", () => {
     }
   });
 });
+
+describe("llmFromEnv timeouts", () => {
+  it("treats a model that hangs as unavailable and moves on", async () => {
+    const { llmFromEnv } = await import("./extract");
+    const seen: string[] = [];
+    const realFetch = globalThis.fetch;
+    const env = { ...process.env };
+    Object.assign(process.env, { EXTRACT_PROVIDER: "openai", EXTRACT_MODEL: "slow,fast", OPENAI_API_KEY: "k", OPENAI_BASE_URL: "https://llm.test/v1", LLM_TIMEOUT_MS: "50" });
+    globalThis.fetch = (async (_url: string, init: RequestInit) => {
+      const model = JSON.parse(String(init.body)).model as string;
+      seen.push(model);
+      if (model === "slow") {
+        return new Promise<Response>((_, reject) => init.signal?.addEventListener("abort", () => reject(Object.assign(new Error("timeout"), { name: "TimeoutError" }))));
+      }
+      return new Response(JSON.stringify({ choices: [{ message: { content: "ok" } }] }), { status: 200 });
+    }) as typeof fetch;
+    try {
+      expect(await llmFromEnv()("sys", [{ role: "user", content: "hi" }])).toBe("ok");
+      expect(seen).toEqual(["slow", "fast"]);
+    } finally {
+      globalThis.fetch = realFetch;
+      process.env = env;
+    }
+  });
+});

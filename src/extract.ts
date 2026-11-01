@@ -143,8 +143,18 @@ export async function loadText(path: string): Promise<string> {
 
 // Free tiers often return 429/503 under load; back off and retry before giving up
 export async function postJson(url: string, headers: Record<string, string>, body: unknown, tries = 4): Promise<Response> {
+  const timeoutMs = Number(process.env.LLM_TIMEOUT_MS) || 90_000;
   for (let i = 1; ; i++) {
-    const res = await fetch(url, { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body) });
+    let res: Response;
+    try {
+      res = await fetch(url, { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
+    } catch (err) {
+      // An overloaded model can hang without answering; report it as unavailable so the caller tries the next model
+      if (err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError")) {
+        return new Response(`Timed out after ${timeoutMs / 1000}s`, { status: 504 });
+      }
+      throw err;
+    }
     const retryable = res.status === 429 || res.status >= 500;
     if (res.ok || !retryable || i >= tries) return res;
     // A used-up daily quota won't recover by waiting; let the caller fall back to another model
