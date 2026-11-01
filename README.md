@@ -102,7 +102,7 @@ The explainer, eligibility check and action plan need **no API keys**: they read
 To enable them, set the same variables as the pipeline (below) in `.env` locally, or in **Vercel → Project → Settings → Environment Variables** for the deployed site.
 
 ```bash
-npm test          # 44 tests: eligibility logic, extraction retries, quote checks, Q&A, model fallback, translations, all 5 schemes
+npm test          # 45 tests: eligibility logic, extraction retries, quote checks, Q&A, model fallback and timeouts, translations, all 5 schemes
 npm run typecheck
 npm run build
 ```

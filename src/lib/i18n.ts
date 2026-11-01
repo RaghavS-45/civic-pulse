@@ -92,6 +92,7 @@ const en = {
   unverifiedBanner: "AI-extracted from the document you gave. Not yet checked by a person. Every quote was matched to the text automatically, but confirm with the official source before applying.",
   unverifiedQuotes: (n: number) => `${n} quote(s) could not be matched to the text.`,
   startOver: "Explain another document",
+  howExtracted: "How the AI extracted this",
   translateBtn: "हिंदी में पढ़ें (AI translation)",
   translating: "Translating…",
   // questions
@@ -224,6 +225,7 @@ const hi: UIStrings = {
   unverifiedBanner: "यह जानकारी AI ने आपके दिए दस्तावेज़ से निकाली है। किसी व्यक्ति ने अभी इसकी जाँच नहीं की है। हर लाइन अपने-आप दस्तावेज़ से मिलाई गई है, फिर भी आवेदन से पहले सरकारी स्रोत से पुष्टि करें।",
   unverifiedQuotes: (n) => `${n} लाइन(ें) दस्तावेज़ से मेल नहीं खाईं।`,
   startOver: "कोई और दस्तावेज़ समझें",
+  howExtracted: "AI ने यह जानकारी कैसे निकाली",
   translateBtn: "हिंदी में पढ़ें (AI अनुवाद)",
   translating: "अनुवाद हो रहा है…",
   qAge: "आपकी उम्र कितनी है?",

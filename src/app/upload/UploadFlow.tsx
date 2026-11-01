@@ -76,7 +76,8 @@ export default function UploadFlow({ locale }: { locale: Locale }) {
           if (!line) continue;
           const ev = JSON.parse(line) as ExtractStreamEvent;
           describe(ev);
-          if (ev.type === "done") setResult({ scheme: ev.scheme, sourceText: ev.sourceText, unverified: ev.unverified });
+          // Let the reader see the final check before the result replaces the log
+          if (ev.type === "done") await new Promise((r) => setTimeout(r, 1800)).then(() => setResult({ scheme: ev.scheme, sourceText: ev.sourceText, unverified: ev.unverified }));
           if (ev.type === "error") setError(ev.message);
         }
       }
@@ -107,12 +108,20 @@ export default function UploadFlow({ locale }: { locale: Locale }) {
     const scheme = hindi ? applyTranslation(result.scheme, hindi) : result.scheme;
     const labels = hindi?.optionLabels ?? {};
     const header = (
+      <>
+      <details className="card small" open>
+        <summary><b>{t.howExtracted}</b></summary>
+        <ul className="steps-log" style={{ marginTop: 8 }}>
+          {log.map((l, i) => <li key={i} className={l.bad ? "bad" : undefined}><span>{l.icon}</span><span>{l.text}</span></li>)}
+        </ul>
+      </details>
       <div className="row" style={{ marginBottom: 12 }}>
         <button type="button" className="btn secondary" onClick={() => { setResult(null); setLog([]); setHindi(null); }}>← {t.startOver}</button>
         {!hindi && (
           <button type="button" className="btn secondary" onClick={translate} disabled={translating}>{translating ? t.translating : t.translateBtn}</button>
         )}
       </div>
+      </>
     );
     return (
       <SchemeFlow
