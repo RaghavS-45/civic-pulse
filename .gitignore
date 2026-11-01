@@ -10,3 +10,6 @@ dist/
 next-env.d.ts
 *.tsbuildinfo
 CLAUDE.md
+
+demo-video/
+.vidcheck/
