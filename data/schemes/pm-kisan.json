@@ -1,0 +1,137 @@
+{
+  "id": "pm-kisan",
+  "title": "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+  "issuingAuthority": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+  "sourceUrl": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+  "summary": "PM-KISAN gives ₹6,000 a year to farmer families who own farm land. The money comes straight into your bank account in three parts of ₹2,000 each: April–July, August–November and December–March. Families are not eligible if anyone in the family pays income tax, works or worked for the government, gets a pension of ₹10,000 or more a month, or is a practising doctor, engineer, lawyer, CA or architect.",
+  "benefits": [
+    {
+      "description": "₹6,000 a year, paid as three instalments of ₹2,000 (April–July, August–November, December–March)",
+      "amount": 6000,
+      "sourceClause": "The financial benefit of Rs.6000/- per year is to be released to the eligible farmers in three installments of Rs.2000/- each every 4-month / trimester"
+    },
+    {
+      "description": "Money goes directly into your bank account (Direct Benefit Transfer)",
+      "sourceClause": "released by the Central Government online directly into the bank accounts of the eligible farmers under Direct Benefit Transfer mode"
+    }
+  ],
+  "eligibility": [
+    {
+      "field": "other",
+      "key": "ownsCultivableLand",
+      "operator": "eq",
+      "value": true,
+      "label": "Your family (husband, wife, minor children) owns farm land in the land records",
+      "sourceClause": "A landholder farmer’s family is defined as “a family comprising of husband, wife and minor children who owns cultivable land as per land records of the concerned State/UT”."
+    },
+    {
+      "field": "other",
+      "key": "familyHoldsConstitutionalPost",
+      "operator": "eq",
+      "value": false,
+      "label": "No one in your family holds or held a constitutional post",
+      "sourceClause": "i) Former and present holders of constitutional posts"
+    },
+    {
+      "field": "other",
+      "key": "familyHasElectedRepresentative",
+      "operator": "eq",
+      "value": false,
+      "label": "No one in your family is or was a Minister, MP, MLA/MLC, Mayor or District Panchayat Chairperson",
+      "sourceClause": "ii) Former and present Ministers / State Ministers and former / present Members of Lok Sabha / Rajya Sabha / State Legislative Assemblies / State Legislative Councils, former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats."
+    },
+    {
+      "field": "other",
+      "key": "familyHasGovtEmployee",
+      "operator": "eq",
+      "value": false,
+      "label": "No one in your family is a serving or retired government or PSU officer/employee (Group D, Class IV and Multi Tasking Staff are allowed)",
+      "sourceClause": "iii) All serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular"
+    },
+    {
+      "field": "other",
+      "key": "familyHasPension10kPlus",
+      "operator": "eq",
+      "value": false,
+      "label": "No one in your family gets a pension of ₹10,000 or more a month (Group D, Class IV and Multi Tasking Staff are allowed)",
+      "sourceClause": "iv) All superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more (Excluding Multi Tasking Staff / Class IV / Group D employees)"
+    },
+    {
+      "field": "other",
+      "key": "familyPaidIncomeTax",
+      "operator": "eq",
+      "value": false,
+      "label": "No one in your family paid income tax in the last assessment year",
+      "sourceClause": "v) All Persons who paid Income Tax in last assessment year."
+    },
+    {
+      "field": "other",
+      "key": "familyHasPractisingProfessional",
+      "operator": "eq",
+      "value": false,
+      "label": "No one in your family is a practising doctor, engineer, lawyer, CA or architect",
+      "sourceClause": "vi) Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices."
+    },
+    {
+      "field": "other",
+      "key": "isNRI",
+      "operator": "eq",
+      "value": false,
+      "label": "You are not a Non-Resident Indian (NRI)",
+      "sourceClause": "(c) In case of new beneficiaries being uploaded on the PM-KISAN Portal, all land holding farmers’ families who are Non-resident Indians (NRIs) in terms of the provisions of the Income Tax Act, 1961 shall be excluded from any benefit under the Scheme."
+    }
+  ],
+  "exclusions": [
+    {
+      "description": "All Institutional Land holders",
+      "sourceClause": "(a) All Institutional Land holders; and"
+    },
+    {
+      "description": "Former and present holders of constitutional posts",
+      "sourceClause": "i) Former and present holders of constitutional posts"
+    },
+    {
+      "description": "Former and present Ministers, MPs, MLAs, MLCs, Mayors of Municipal Corporations, and Chairpersons of District Panchayats",
+      "sourceClause": "ii) Former and present Ministers / State Ministers and former / present Members of Lok Sabha / Rajya Sabha / State Legislative Assemblies / State Legislative Councils, former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats."
+    },
+    {
+      "description": "Serving or retired officers and employees of Government ministries, departments, PSEs, attached/autonomous institutions, and regular employees of Local Bodies (excluding Multi Tasking Staff / Class IV / Group D employees)",
+      "sourceClause": "iii) All serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular"
+    },
+    {
+      "description": "Superannuated or retired pensioners with a monthly pension of Rs. 10,000 or more (excluding Multi Tasking Staff / Class IV / Group D employees)",
+      "sourceClause": "iv) All superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more (Excluding Multi Tasking Staff / Class IV / Group D employees)"
+    },
+    {
+      "description": "Persons who paid Income Tax in the last assessment year",
+      "sourceClause": "v) All Persons who paid Income Tax in last assessment year."
+    },
+    {
+      "description": "Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices",
+      "sourceClause": "vi) Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices."
+    },
+    {
+      "description": "Non-resident Indians (NRIs) in terms of the Income Tax Act, 1961 for new beneficiaries uploaded on the PM-KISAN Portal",
+      "sourceClause": "(c) In case of new beneficiaries being uploaded on the PM-KISAN Portal, all land holding farmers’ families who are Non-resident Indians (NRIs) in terms of the provisions of the Income Tax Act, 1961 shall be excluded from any benefit under the Scheme."
+    }
+  ],
+  "documentsRequired": [
+    "Aadhaar number",
+    "Bank account number and IFSC code",
+    "Land record details (for example Khasra or survey number)",
+    "Mobile number (optional, for SMS alerts)"
+  ],
+  "deadlines": [],
+  "howToApply": {
+    "steps": [
+      "Make sure your family's name is in the land records. Your State government finds eligible families from these records.",
+      "Give a self-declaration that no one in your family is in the excluded groups, and agree to Aadhaar verification.",
+      "Give your name, age, gender, category, Aadhaar number, and bank account number with IFSC code.",
+      "Local revenue officials check the list, and the State uploads it to the PM-KISAN portal.",
+      "Check the list put up at your Panchayat. If your family was left out, you can raise a complaint.",
+      "Be truthful: if a self-declaration is wrong, the money can be taken back and legal action can follow."
+    ],
+    "portalUrl": "https://pmkisan.gov.in/"
+  },
+  "realWorldImpact": "Eligible farming families get direct money of ₹6,000 every year to help purchase farm tools, seeds, and meet basic household expenses."
+}

@@ -1,0 +1,85 @@
+{
+  "id": "sukanya-samriddhi",
+  "title": "Sukanya Samriddhi Yojana (Sukanya Samriddhi Account Scheme, 2019)",
+  "issuingAuthority": "Central Government (Government of India)",
+  "sourceUrl": "https://www.nsiindia.gov.in/writereaddata/SchemeRules/SukanyaSamriddhiAccountSchemeRule.pdf",
+  "summary": "Sukanya Samriddhi is a savings account for your daughter. A parent or guardian can open it if the girl is under 10 years old. You deposit at least ₹250 and up to ₹1,50,000 a year, for 15 years. The money earns interest set by the government, and the account matures 21 years after it is opened. You can take out up to half the money for her higher studies once she turns 18 or passes Class 10.",
+  "benefits": [
+    {
+      "description": "Your savings earn interest set by the government. This notice (2020) says 7.6% a year; ask at the post office or bank for today's rate.",
+      "sourceClause": "The deposit made in the account on or after the 1st day of April, 2020 and the balances at the credit of the account shall earn interest at the rate of 7.6 per cent. per annum."
+    },
+    {
+      "description": "Withdrawal of up to 50% of the account balance is permitted for the girl child's education after she turns 18 or passes 10th standard.",
+      "sourceClause": "On an application in Form-3, withdrawal of upto a maximum of fifty per cent. of the amount in the account at the end of the financial year preceding the year of application for withdrawal, shall be allowed for the purpose of education of the account holder:"
+    },
+    {
+      "description": "Full outstanding balance with interest is payable upon maturity after 21 years.",
+      "sourceClause": "On an application in Form-4 by the account holder, the balance outstanding along with interest as applicable under paragraph 5 shall be payable to the account holder."
+    },
+    {
+      "description": "The account can be closed early for your daughter's marriage, once she is 18 or older",
+      "sourceClause": "for the reason of intended marriage of the account holder"
+    }
+  ],
+  "eligibility": [
+    {
+      "field": "other",
+      "key": "childIsGirl",
+      "operator": "eq",
+      "value": true,
+      "label": "The account is for your daughter (a girl child), and you are her parent or guardian",
+      "sourceClause": "The account may be opened by one of the guardian in the name of a girl child"
+    },
+    {
+      "field": "other",
+      "key": "girlAgeYears",
+      "operator": "lt",
+      "value": 10,
+      "label": "Your daughter's age in years (must be under 10)",
+      "sourceClause": "who has not attained the age of ten years as on the date of opening of the account."
+    },
+    {
+      "field": "other",
+      "key": "girlAlreadyHasAccount",
+      "operator": "eq",
+      "value": false,
+      "label": "Your daughter does not already have a Sukanya Samriddhi account",
+      "sourceClause": "Every account holder shall have a single account under this Scheme."
+    },
+    {
+      "field": "other",
+      "key": "familyUnderTwoGirlAccounts",
+      "operator": "eq",
+      "value": true,
+      "label": "Your family has fewer than 2 Sukanya accounts already (more are allowed for twins or triplets)",
+      "sourceClause": "An account under this Scheme may be opened for a maximum of two girl children in one family:"
+    }
+  ],
+  "exclusions": [
+    {
+      "description": "Any deposit amount exceeding ₹1,50,000 in a financial year will not earn interest and will be returned immediately.",
+      "sourceClause": "deposit in excess of one lakh fifty thousand rupees in any financial year, if accepted due to any accounting error, shall not be eligible for any interest and be returned immediately to the depositor."
+    },
+    {
+      "description": "A third girl in the same family (allowed only for twins or triplets)",
+      "sourceClause": "An account under this Scheme may be opened for a maximum of two girl children in one family:"
+    }
+  ],
+  "documentsRequired": [
+    "Birth certificate of the girl child",
+    "Required documents of guardian",
+    "Affidavit supported with birth certificates of twins/triplets (for opening more than two accounts in a family due to multiple births)"
+  ],
+  "deadlines": [],
+  "howToApply": {
+    "steps": [
+      "Fill Form-1 to open the account at the accounts office (a post office or bank branch that offers this scheme).",
+      "Attach your daughter's birth certificate and your own documents as her guardian.",
+      "For twins or triplets beyond two girls, also give an affidavit with their birth certificates.",
+      "Make the first deposit of at least ₹250 (then in multiples of ₹50).",
+      "Deposit at least ₹250 every year for 15 years. If you miss a year, you can fix it later by paying ₹50 extra for each missed year."
+    ]
+  },
+  "realWorldImpact": "Saving even small amounts every year builds a fund, with interest, for a daughter's college fees or marriage."
+}

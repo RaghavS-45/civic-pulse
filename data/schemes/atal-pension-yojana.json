@@ -1,0 +1,86 @@
+{
+  "id": "atal-pension-yojana",
+  "title": "Atal Pension Yojana",
+  "issuingAuthority": "Government of India (run by PFRDA, the pension regulator)",
+  "sourceUrl": "https://www.pfrda.org.in/documents/33652/307349/APY%20Subscriber%20Information%20Brochure%20English",
+  "summary": "Atal Pension Yojana gives you a fixed monthly pension from the Government of India after you turn 60. You can join if you are an Indian citizen aged 18 to 40 and have never paid income tax. You choose a pension of ₹1,000, ₹2,000, ₹3,000, ₹4,000 or ₹5,000 a month. You pay small amounts every month, quarter or half-year, taken automatically from your savings bank account. After you die, your husband or wife gets the same pension, and after both of you, the saved money goes to your nominee.",
+  "benefits": [
+    {
+      "description": "Lifelong minimum guaranteed pension of Rs. 1000 to Rs. 5000 per month to the subscriber after age 60.",
+      "sourceClause": "Lifelong minimum guaranteed Pension of Rs.1000 to Rs.5000 per month to the subscriber"
+    },
+    {
+      "description": "Lifelong pension to the spouse after the death of the subscriber.",
+      "sourceClause": "The same pension to the Spouse for lifetime, after death of the subscriber."
+    },
+    {
+      "description": "Return of accumulated pension wealth to the nominee after the death of both subscriber and spouse.",
+      "sourceClause": "Return of pension wealth accumulated till 60 years of age to the nominee after death of the subscriber and spouse."
+    }
+  ],
+  "eligibility": [
+    {
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "label": "18 years or older",
+      "sourceClause": "If you are between 18 and 40 years of age, you can join the Atal Pension Yojana."
+    },
+    {
+      "field": "age",
+      "operator": "lte",
+      "value": 40,
+      "label": "40 years or younger",
+      "sourceClause": "If you are between 18 and 40 years of age, you can join the Atal Pension Yojana."
+    },
+    {
+      "field": "other",
+      "key": "isIndianCitizen",
+      "operator": "eq",
+      "value": true,
+      "label": "You are a citizen of India",
+      "sourceClause": "an individual should be a citizen of India between the age of 18 and 40 years"
+    },
+    {
+      "field": "other",
+      "key": "isOrWasIncomeTaxPayer",
+      "operator": "eq",
+      "value": false,
+      "label": "You do not pay income tax and have never paid it",
+      "sourceClause": "From 1st October, 2022, any citizen who is or has been an income-tax payer (under Income Tax Act,1961), shall not be eligible to join APY."
+    },
+    {
+      "field": "other",
+      "key": "hasSavingsBankAccount",
+      "operator": "eq",
+      "value": true,
+      "label": "You have a savings bank account",
+      "sourceClause": "Contributions can be made on a Monthly or Quarterly or Half yearly basis through auto debit facility from savings Bank account."
+    }
+  ],
+  "exclusions": [
+    {
+      "description": "Any citizen who is or has been an income-tax payer under the Income Tax Act, 1961 is not eligible to join from October 1, 2022.",
+      "sourceClause": "From 1st October, 2022, any citizen who is or has been an income-tax payer (under Income Tax Act,1961), shall not be eligible to join APY."
+    }
+  ],
+  "documentsRequired": [
+    "Savings bank account details",
+    "Nominee details",
+    "Spouse details (if married)",
+    "Aadhaar (only if you sign up online using eKYC)"
+  ],
+  "deadlines": [],
+  "howToApply": {
+    "steps": [
+      "Fill the APY application form and submit it at your bank branch.",
+      "Or sign up online with Aadhaar eKYC on the eNPS website.",
+      "Or use the free 'APY and NPS Lite' mobile app from the Google Play Store.",
+      "Or join through your bank's net banking or website, if your bank offers it.",
+      "Give your nominee and spouse details. They are compulsory.",
+      "Questions? Call the free PFRDA APY helpline: 1800 1100 69."
+    ],
+    "portalUrl": "https://enps.nsdl.com/eNPS/ApySubRegistration.html"
+  },
+  "realWorldImpact": "A daily-wage worker or shopkeeper with no company pension can make sure they get a fixed income every month in old age, and that their family is protected."
+}
