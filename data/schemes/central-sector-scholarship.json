@@ -1,0 +1,125 @@
+{
+  "id": "central-sector-scholarship",
+  "title": "Central Sector Scheme of Scholarship for College and University Students (PM-USP CSSS)",
+  "issuingAuthority": "Department of Higher Education, Ministry of Education, Government of India",
+  "sourceUrl": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_DOHE_CSSS.pdf",
+  "summary": "This scholarship gives money to good students from poor families who are going to college. You can get it if you scored in the top 20% of your stream in your Class 12 board exam and your family earns up to ₹4.5 lakh a year. You get ₹12,000 a year during graduation and ₹20,000 a year during post-graduation. The money goes straight into your own bank account. You apply online on the National Scholarships Portal.",
+  "benefits": [
+    {
+      "description": "₹12,000 per year for the first three years of graduation (college/university)",
+      "amount": 12000,
+      "sourceClause": "The rate of scholarship is Rs.12,000/-per annum at Graduation level for first three years of College and University courses"
+    },
+    {
+      "description": "₹20,000 per year at post-graduation level",
+      "amount": 20000,
+      "sourceClause": "Rs.20,000/-per annum at Post-Graduation level"
+    },
+    {
+      "description": "₹20,000 per year in the 4th and 5th year of a five-year or integrated professional course",
+      "amount": 20000,
+      "sourceClause": "Students pursuing professional courses, in case, where the duration of course is five (5) years/Integrated course will get Rs. 20,000/-per annum in the 4th and 5th year."
+    },
+    {
+      "description": "B.Tech/B.E. students get ₹12,000 a year for years 1 to 3 and ₹20,000 in year 4",
+      "amount": 20000,
+      "sourceClause": "students pursuing technical courses such as B.Tech, B.Engg. will get scholarship up to graduation level only i.e. Rs. 12,000 p.a. for 1st, 2nd and 3rd year and Rs. 20,000 in the 4th year."
+    },
+    {
+      "description": "Money is paid directly into the student's own savings bank account (DBT)",
+      "sourceClause": "The scholarship will be disbursed directly into the savings bank accounts of the beneficiaries through Direct Benefit Transfer (DBT)"
+    }
+  ],
+  "eligibility": [
+    {
+      "field": "education",
+      "operator": "gte",
+      "value": "class12",
+      "label": "Passed Class 12 (10+2 or equivalent)",
+      "sourceClause": "in Class XII of 10+2 pattern or equivalent"
+    },
+    {
+      "field": "other",
+      "key": "classXIIPercentileInStream",
+      "operator": "gt",
+      "value": 80,
+      "label": "Above the 80th percentile of pass-outs in your stream on your Class 12 board",
+      "sourceClause": "Students who are above 80th percentile of successful candidates in the relevant stream from the respective Board of Examination in Class XII of 10+2 pattern or equivalent"
+    },
+    {
+      "field": "income",
+      "operator": "lte",
+      "value": 450000,
+      "label": "Family income up to ₹4.5 lakh a year",
+      "sourceClause": "Students with gross parental/family income upto Rs. 4.5 lakh per annum are eligible for scholarship under the scheme."
+    },
+    {
+      "field": "other",
+      "key": "isRegularDegreeCourse",
+      "operator": "eq",
+      "value": true,
+      "label": "Studying a regular degree course (not distance/correspondence, not a diploma)",
+      "sourceClause": "Pursuing regular degree courses and not correspondence or distance mode or pursuing Diploma courses"
+    },
+    {
+      "field": "other",
+      "key": "isInstitutionRecognized",
+      "operator": "eq",
+      "value": true,
+      "label": "College is recognised by AICTE or the relevant regulatory body",
+      "sourceClause": "Pursuing courses at colleges/institutions recognized by All India Council for Technical Education and respective Regulatory Bodies concerned"
+    },
+    {
+      "field": "other",
+      "key": "receivesOtherScholarship",
+      "operator": "eq",
+      "value": false,
+      "label": "Not getting any other scholarship, fee waiver or fee reimbursement",
+      "sourceClause": "Not availing benefit of any other scholarship schemes including State run scholarship schemes/ fee waiver & reimbursement scheme"
+    }
+  ],
+  "exclusions": [
+    {
+      "description": "Students in distance or correspondence courses, or in diploma courses",
+      "sourceClause": "not correspondence or distance mode or pursuing Diploma courses"
+    },
+    {
+      "description": "Students already getting another scholarship, including state scholarships or fee waiver/reimbursement",
+      "sourceClause": "Not availing benefit of any other scholarship schemes including State run scholarship schemes/ fee waiver & reimbursement scheme"
+    },
+    {
+      "description": "The scholarship is taken away for indiscipline, criminal behaviour or ragging",
+      "sourceClause": "Complaints against the student regarding any in disciplined or criminal behaviour including any complaints of having indulged in ragging, will lead to forfeiture of scholarship"
+    },
+    {
+      "description": "Paper applications sent directly to the Ministry are not accepted",
+      "sourceClause": "Fresh/Renewal applications sent directly to the Ministry of Education shall not be accepted."
+    }
+  ],
+  "documentsRequired": [
+    "Income certificate (fresh applicants only)",
+    "Savings bank account in the student's own name",
+    "Class 12 marksheet (verified through DigiLocker)",
+    "Caste certificate, if applying under a reserved category (verified through DigiLocker)"
+  ],
+  "deadlines": [
+    {
+      "description": "Application opening and closing dates are announced on the National Scholarships Portal each year"
+    },
+    {
+      "description": "Renewal applications must be submitted before the cut-off date; missing it means no renewal for that year"
+    }
+  ],
+  "howToApply": {
+    "steps": [
+      "Go to the National Scholarships Portal (scholarships.gov.in) and apply online. Paper applications are not accepted.",
+      "Your caste and education details are checked through DigiLocker.",
+      "Your college verifies your application first, then the State Higher Education Department.",
+      "Check the selection list on the portal.",
+      "Track your payment with \"Know Your Payment\" on the PFMS portal using your Aadhaar, bank account or NSP Application ID.",
+      "To renew each year: score at least 50% in your annual exam, keep at least 75% attendance, and apply for renewal on NSP before the cut-off date."
+    ],
+    "portalUrl": "https://scholarships.gov.in/"
+  },
+  "realWorldImpact": "A student from a family earning under ₹4.5 lakh can get up to ₹12,000 a year for a 3-year degree, and more for post-graduation, to help pay for books, travel and daily costs. Up to 82,000 new students get it every year, and half the slots are kept for girls."
+}

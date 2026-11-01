@@ -1,0 +1,148 @@
+{
+  "id": "pm-vishwakarma",
+  "title": "PM Vishwakarma",
+  "issuingAuthority": "Ministry of Micro, Small and Medium Enterprises (MoMSME), Government of India",
+  "sourceUrl": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf",
+  "summary": "PM Vishwakarma helps traditional artisans and craftspeople like tailors, carpenters, barbers, potters, cobblers and masons who work for themselves. If you are 18 or older and work in one of 18 listed trades, you can register for free at your nearest Common Service Centre. You get a certificate and ID card, paid training with ₹500 a day, up to ₹15,000 for new tools, and loans of ₹1 lakh and then ₹2 lakh without any security at only 5% interest. You also get ₹1 for every digital payment, up to 100 a month.",
+  "benefits": [
+    {
+      "description": "PM Vishwakarma Certificate and ID Card that recognise you as a Vishwakarma and unlock all benefits",
+      "sourceClause": "The artisans and craftspeople will receive PM Vishwakarma Certificate and PM Vishwakarma ID Card."
+    },
+    {
+      "description": "Paid training: ₹500 per day stipend during Basic Training (5-7 days) and Advanced Training",
+      "amount": 500,
+      "sourceClause": "Each beneficiary will be eligible to receive a training stipend of Rs. 500 per day while undergoing the Basic and Advanced Training programmes."
+    },
+    {
+      "description": "Free food and stay during training",
+      "sourceClause": "Board and lodging during the training will be provided free of cost"
+    },
+    {
+      "description": "Up to ₹15,000 for new tools, given as e-vouchers after Skill Assessment",
+      "amount": 15000,
+      "sourceClause": "A toolkit incentive of upto Rs. 15,000 will be provided to the beneficiary after Skill Assessment at the start of Basic Training."
+    },
+    {
+      "description": "First loan of up to ₹1 lakh without security (repay in 18 months), after completing Basic Training",
+      "amount": 100000,
+      "sourceClause": "The beneficiary must have undergone Skill Assessment and completed Basic Training to be eligible to avail first tranche of credit support of upto Rs 1 lakh under the Scheme."
+    },
+    {
+      "description": "Second loan of up to ₹2 lakh (repay in 30 months) after repaying the first loan and using digital payments or doing Advanced Training",
+      "amount": 200000,
+      "sourceClause": "The second loan tranche will be available to beneficiaries who have availed the 1st tranche and maintained a standard loan account and have adopted digital transactions in their business or have undergone Advanced Training."
+    },
+    {
+      "description": "Low interest: you pay only 5% interest on these loans",
+      "sourceClause": "Concessional rate of interest chargeable to beneficiaries for loan will be fixed at 5%."
+    },
+    {
+      "description": "₹1 back for each digital payment received or made, up to 100 payments a month",
+      "amount": 1,
+      "sourceClause": "An amount of Re. 1 per eligible digital transaction (upto maximum 100 eligible transactions monthly) will be credited to the beneficiary’s bank account"
+    },
+    {
+      "description": "Registration is free",
+      "sourceClause": "There shall be no fee or charge for enrolment under PM Vishwakarma."
+    }
+  ],
+  "eligibility": [
+    {
+      "field": "occupation",
+      "operator": "in",
+      "value": [
+        "carpenter",
+        "boat maker",
+        "armourer",
+        "blacksmith",
+        "hammer and tool kit maker",
+        "locksmith",
+        "goldsmith",
+        "potter",
+        "sculptor",
+        "cobbler",
+        "mason",
+        "basket/mat/broom maker/coir weaver",
+        "doll and toy maker",
+        "barber",
+        "garland maker",
+        "washerman",
+        "tailor",
+        "fishing net maker"
+      ],
+      "label": "Works in one of the 18 listed traditional trades",
+      "sourceClause": "An artisan or craftsperson working with hands and tools and engaged in one of the family-based traditional trades specified in Para 2.3, in the unorganized or informal sector, on self-employment basis, shall be eligible for registration under PM Vishwakarma."
+    },
+    {
+      "field": "other",
+      "key": "isSelfEmployedInformal",
+      "operator": "eq",
+      "value": true,
+      "label": "Self-employed, working with hands and tools in the informal sector",
+      "sourceClause": "An artisan or craftsperson working with hands and tools and engaged in one of the family-based traditional trades specified in Para 2.3, in the unorganized or informal sector, on self-employment basis, shall be eligible for registration under PM Vishwakarma."
+    },
+    {
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "label": "18 years or older on the date of registration",
+      "sourceClause": "The minimum age of the beneficiary should be 18 years on the date of registration."
+    },
+    {
+      "field": "other",
+      "key": "hasDisqualifyingLoanPast5Years",
+      "operator": "eq",
+      "value": false,
+      "label": "No PMEGP, MUDRA or SVANidhi-type business loan in the last 5 years (fully repaid MUDRA/SVANidhi loans are OK)",
+      "sourceClause": "should not have availed loans under similar credit-based schemes of Central Government or State Government for self-employment/ business development, e.g. PMEGP, PM SVANidhi, MUDRA, in the past 5 years. However, the beneficiaries of MUDRA and SVANidhi who have fully repaid their loan, will be eligible under PM Vishwakarma."
+    },
+    {
+      "field": "other",
+      "key": "familyMemberAlreadyRegistered",
+      "operator": "eq",
+      "value": false,
+      "label": "No one else in your family (husband, wife, unmarried children) is already registered",
+      "sourceClause": "The registration and benefits under the Scheme shall be restricted to one member of the family."
+    },
+    {
+      "field": "other",
+      "key": "familyInGovernmentService",
+      "operator": "eq",
+      "value": false,
+      "label": "You and your family members are not in government service",
+      "sourceClause": "A person in government service and his/her family members shall not be eligible under the Scheme."
+    }
+  ],
+  "exclusions": [
+    {
+      "description": "People who took a similar government business loan (PMEGP, PM SVANidhi, MUDRA) in the last 5 years, unless a MUDRA or SVANidhi loan is fully repaid",
+      "sourceClause": "should not have availed loans under similar credit-based schemes of Central Government or State Government for self-employment/ business development, e.g. PMEGP, PM SVANidhi, MUDRA, in the past 5 years. However, the beneficiaries of MUDRA and SVANidhi who have fully repaid their loan, will be eligible under PM Vishwakarma."
+    },
+    {
+      "description": "Government employees and their family members",
+      "sourceClause": "A person in government service and his/her family members shall not be eligible under the Scheme."
+    },
+    {
+      "description": "A second person from the same family",
+      "sourceClause": "The registration and benefits under the Scheme shall be restricted to one member of the family."
+    }
+  ],
+  "documentsRequired": [
+    "Aadhaar",
+    "Mobile number",
+    "Bank account details",
+    "Ration card (if you don't have one, Aadhaar numbers of all family members)"
+  ],
+  "deadlines": [],
+  "howToApply": {
+    "steps": [
+      "Visit the nearest Common Service Centre (CSC) or access the online PM Vishwakarma portal.",
+      "Complete the enrolment and application process using Aadhaar-based biometric authentication.",
+      "Provide required information including Aadhaar, mobile number, bank details, and ration card (or Aadhaar numbers of all family members if no ration card is available).",
+      "Undergo verification at the Gram Panchayat or Urban Local Body level, followed by vetting by the District Implementation Committee and final approval by the Screening Committee."
+    ],
+    "portalUrl": "https://pmvishwakarma.gov.in"
+  },
+  "realWorldImpact": "A tailor or carpenter can get trained, buy better tools and borrow up to ₹3 lakh cheaply to grow their work, instead of paying high interest to a moneylender."
+}
