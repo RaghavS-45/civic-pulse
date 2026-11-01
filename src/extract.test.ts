@@ -77,3 +77,26 @@ describe("parseJsonLoose", () => {
     expect(parseJsonLoose('Sure! {"a":2} hope that helps')).toEqual({ a: 2 });
   });
 });
+
+describe("llmFromEnv model fallback", () => {
+  it("moves to the next model when one is out of daily quota, without retrying it", async () => {
+    const { llmFromEnv } = await import("./extract");
+    const seen: string[] = [];
+    const realFetch = globalThis.fetch;
+    const env = { ...process.env };
+    Object.assign(process.env, { EXTRACT_PROVIDER: "openai", EXTRACT_MODEL: "model-a, model-b", OPENAI_API_KEY: "k", OPENAI_BASE_URL: "https://llm.test/v1" });
+    globalThis.fetch = (async (_url: string, init: RequestInit) => {
+      const model = JSON.parse(String(init.body)).model as string;
+      seen.push(model);
+      if (model === "model-a") return new Response("Generate content requests per day limit exceeded", { status: 429 });
+      return new Response(JSON.stringify({ choices: [{ message: { content: "hello" } }] }), { status: 200 });
+    }) as typeof fetch;
+    try {
+      expect(await llmFromEnv()("sys", [{ role: "user", content: "hi" }])).toBe("hello");
+      expect(seen).toEqual(["model-a", "model-b"]);
+    } finally {
+      globalThis.fetch = realFetch;
+      process.env = env;
+    }
+  });
+});

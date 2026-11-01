@@ -25,6 +25,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           </div>
         </Link>
       ))}
+
+      <Link href={`/upload${q}`} className="card upload-cta">
+        <p>{t.uploadCtaText}</p>
+        <span className="cta">{t.uploadCta}</span>
+      </Link>
     </div>
   );
 }

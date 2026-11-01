@@ -156,3 +156,20 @@ footer.disclaimer { border-top: 1px solid var(--line); padding: 18px 0 40px; fon
 .listen .bar span { display: block; height: 100%; background: var(--brand); transition: width 0.25s linear; }
 
 [lang="hi"] { line-height: 1.7; }
+
+.ask .askrow { display: flex; gap: 8px; margin: 8px 0 10px; }
+.ask .askrow input { flex: 1; min-width: 0; min-height: 48px; padding: 0 12px; border: 1px solid #cfc7b9; border-radius: 10px; font: inherit; background: #fff; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--brand-soft); color: var(--brand); border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 0.9rem; cursor: pointer; text-align: left; }
+.answer { margin-top: 12px; padding: 14px; border-radius: 12px; background: #fbf7f1; border-left: 4px solid var(--brand); }
+.answer.not_covered, .answer.unsupported { border-left-color: var(--warn); background: var(--warn-soft); }
+.answer .answer-text { font-weight: 500; }
+.answer blockquote { margin: 6px 0 10px; padding: 6px 10px; border-left: 3px solid var(--accent); background: #fff; font-style: italic; font-size: 0.9rem; }
+
+.upload-cta { display: block; text-decoration: none; color: inherit; border: 2px dashed var(--brand); background: var(--brand-soft); }
+.upload-cta .cta { color: var(--brand); font-weight: 700; }
+.steps-log { list-style: none; padding: 0; margin: 0; }
+.steps-log li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; padding: 6px 0; font-size: 0.95rem; }
+.steps-log li.bad { color: var(--warn); }
+.q textarea { width: 100%; min-height: 140px; padding: 10px 12px; border: 1px solid #cfc7b9; border-radius: 10px; font: inherit; background: #fff; }
+.q input[type="file"] { font: inherit; }

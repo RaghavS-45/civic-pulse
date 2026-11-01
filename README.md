@@ -2,7 +2,7 @@
 
 **Team Codesh** · Civic Pulse track (Digital Governance & Public Information) · Problem: *Multilingual Policy, Rights & Scheme Explainer*
 
-**Live demo:** _add Vercel URL here_ · **Demo video:** _add link here_
+**Live demo:** https://civic-pulse-codesh.vercel.app · **Demo video:** _add link here_
 
 Government schemes are written in dense legal English. The people they are meant for (farmers, artisans, students, daily-wage workers) often can't read them, don't know if they qualify, and don't know what to do next.
 
@@ -11,6 +11,8 @@ Civic Pulse turns official scheme documents into:
 1. **A plain-language explainer** in English or Hindi, with audio you can listen to.
 2. **An eligibility check** based on a few simple questions. The verdict shows every rule, your answer, and **the exact line from the official document** each rule comes from.
 3. **An action plan**: documents to keep ready, application steps, the official portal, and a draft application filled in from your answers.
+4. **Answers to your own questions** ("Can my sister apply too?"), in English or Hindi, drawn only from the official text and backed by quotes that are checked against it.
+5. **Any notification, live**: upload a government PDF and watch the AI extract it, with every quote checked against the document, into the same explainer and eligibility check.
 
 ---
 
@@ -23,7 +25,9 @@ Most "AI explainers" ask a language model whether you're eligible, and it may gu
 | **AI reads the document once** | When a scheme is added, an LLM extracts it into structured JSON (benefits, eligibility rules, exclusions, documents, steps). |
 | **Every claim carries a citation** | Each benefit, rule and exclusion has a `sourceClause`, an exact quote from the source PDF. The extractor rejects any quote that doesn't appear word for word in the document and asks the model to fix it. |
 | **Humans verify before use** | Every scheme JSON is checked line by line against its PDF before it goes live. Only verified schemes are registered in the app. |
-| **Code decides eligibility, not AI** | At request time, a pure deterministic function compares your answers with the rules. Same answers, same verdict, every time. |
+| **Code decides eligibility, not AI** | A pure deterministic function compares your answers with the rules. Same answers, same verdict, every time. The AI never decides who is eligible. |
+| **Q&A answers must quote the document** | Answers come only from the official text. Every quote is checked word for word; an answer whose quotes can't be found is shown as unreliable, and questions the document doesn't cover get "the document doesn't say". |
+| **Uploaded documents are labelled** | Schemes extracted live from an uploaded PDF go through the same quote checks, but are clearly marked "not yet checked by a person". |
 | **"Not sure" is allowed** | Missing answers give **"Maybe eligible"** with a "find out first" list, never a guess. |
 | **Hindi doesn't change the rules** | Translations replace only the display text. Rules and source quotes stay identical, and tests check that both languages give the same verdict. |
 
@@ -57,11 +61,16 @@ flowchart TB
     TTS --> MP3[("public/audio/*.mp3")]
   end
 
-  subgraph Runtime["Web app (Next.js, no LLM at request time)"]
+  subgraph Runtime["Web app (Next.js)"]
     UI["Mobile-first UI<br/>English / हिंदी"] -- "profile answers" --> API["POST /api/schemes/:id/check"]
-    API --> ELIG["checkEligibility()<br/>pure deterministic function"]
+    API --> ELIG["checkEligibility()<br/>pure deterministic function<br/>(no AI)"]
     ELIG --> PLAN["Verdict + rule-by-rule trace<br/>+ source quotes + action plan<br/>+ draft application"]
     PLAN --> UI
+    UI -- "question" --> ASK["POST /api/ask<br/>LLM answers from source text"]
+    ASK --> QV{"Quotes found<br/>in the text?"}
+    QV --> UI
+    UI -- "uploaded PDF" --> EXT["POST /api/extract<br/>same extraction + quote checks,<br/>progress streamed live"]
+    EXT -- "unverified scheme" --> UI
   end
 
   JSON --> API
@@ -88,10 +97,12 @@ npm run dev
 
 Open http://localhost:3000 and switch language with **English / हिंदी** in the top-right corner.
 
-The web app needs **no API keys**. It reads only the verified JSON and audio files in this repo.
+The explainer, eligibility check and action plan need **no API keys**: they read only the verified JSON and audio files in this repo. The two live AI features (Ask a question, Explain any notification) need an LLM key on the server; without one, they show a friendly "not configured" message and everything else keeps working.
+
+To enable them, set the same variables as the pipeline (below) in `.env` locally, or in **Vercel → Project → Settings → Environment Variables** for the deployed site.
 
 ```bash
-npm test          # 38 tests: eligibility logic, extraction retries, quote checks, translations, all 5 schemes
+npm test          # 44 tests: eligibility logic, extraction retries, quote checks, Q&A, model fallback, translations, all 5 schemes
 npm run typecheck
 npm run build
 ```
@@ -102,7 +113,7 @@ The pipeline scripts need an LLM key. Copy `.env.example` to `.env` and fill it 
 
 ```bash
 EXTRACT_PROVIDER=openai        # "openai" (any OpenAI-compatible API, e.g. Gemini) or "anthropic"
-EXTRACT_MODEL=gemini-3.8-flash
+EXTRACT_MODEL=gemini-3.8-flash,gemini-3.5-flash   # comma-separated: falls back when one is busy or out of quota
 OPENAI_API_KEY=<your key>
 OPENAI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
 ```
@@ -135,6 +146,10 @@ npm run tts -- my-scheme en
 | `GET` | `/api/schemes?lang=hi` | All verified schemes (summary, source URL, audio URL) |
 | `GET` | `/api/schemes/:id?lang=hi` | Full scheme with citations, and the generated questions |
 | `POST` | `/api/schemes/:id/check` | Body `{ "profile": {...}, "lang": "hi" }` → verdict (`true` / `false` / `"unknown"`), rule-by-rule trace with source quotes, action plan, draft application |
+| `POST` | `/api/ask` | Body `{ "schemeId", "question", "lang" }` → `{ status: "answered" \| "not_covered" \| "unsupported", answer, quotes }`, every quote checked against the source |
+| `POST` | `/api/extract` | Multipart `file` (PDF ≤ 4 MB) or `text` → streams NDJSON progress events, then the extracted scheme |
+| `POST` | `/api/check` | Body `{ "scheme", "profile" }` → same engine for an uploaded (unverified) scheme |
+| `POST` | `/api/translate` | Body `{ "scheme" }` → Hindi translation of an uploaded scheme's display text |
 
 Example:
 
@@ -170,6 +185,7 @@ src/
 - Some rules can't be checked from a form (for example "recognised institution" or land-record status). We ask these as yes/no questions and show the exact official wording, so the user knows what to confirm.
 - Scheme rules change. Each JSON is tied to a specific dated source document, and old figures such as interest rates are labelled as such.
 - Hindi translations were reviewed by us. A native-speaker review across more languages is the next step.
+- The live AI features depend on the LLM provider's quota. On Gemini's free tier that is about 20 requests per model per day, so the deployed demo uses a paid key or a list of fallback models.
 
 ---
 

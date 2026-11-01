@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { LOCALE_INFO, UI, type Locale, type UIStrings } from "@/lib/i18n";
 import type { CheckResponse } from "@/lib/plan";
 import { answersToProfile, type Answers, type Question } from "@/lib/questions";
+import { isUploadedSource } from "@/lib/uploads";
+import type { QAResult } from "@/qa";
 import type { Scheme } from "@/types";
 
 const inr = (n: number) => "₹" + n.toLocaleString("en-IN");
@@ -14,13 +16,13 @@ function Cite({ clause, sourceUrl, t, locale }: { clause: string; sourceUrl: str
       <summary>{t.source}</summary>
       {locale !== "en" && <div className="small muted" style={{ marginTop: 6 }}>{t.sourceNote}</div>}
       <blockquote lang="en">“{clause}”</blockquote>
-      <a href={sourceUrl} target="_blank" rel="noreferrer" className="small">{t.openDoc}</a>
+      {!isUploadedSource(sourceUrl) && <a href={sourceUrl} target="_blank" rel="noreferrer" className="small">{t.openDoc}</a>}
     </details>
   );
 }
 
 // Plays the pre-generated Gemini TTS file; falls back to the browser's own voice if the file is missing
-function ListenButton({ src, text, locale, t }: { src: string; text: string; locale: Locale; t: UIStrings }) {
+function ListenButton({ src, text, locale, t }: { src: string | null; text: string; locale: Locale; t: UIStrings }) {
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const audio = useRef<HTMLAudioElement | null>(null);
@@ -51,6 +53,7 @@ function ListenButton({ src, text, locale, t }: { src: string; text: string; loc
       return;
     }
     setPlaying(true);
+    if (!src) return speakFallback();
     if (!audio.current) {
       const a = new Audio(src);
       a.ontimeupdate = () => setProgress(a.duration ? a.currentTime / a.duration : 0);
@@ -70,6 +73,62 @@ function ListenButton({ src, text, locale, t }: { src: string; text: string; loc
         {playing ? t.stop : t.listen}
       </button>
       {progress > 0 && <div className="bar" aria-hidden><span style={{ width: `${progress * 100}%` }} /></div>}
+    </div>
+  );
+}
+
+function AskBox({ t, locale, request }: { t: UIStrings; locale: Locale; request: Record<string, unknown> }) {
+  const [q, setQ] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [res, setRes] = useState<QAResult | null>(null);
+  const [err, setErr] = useState("");
+
+  async function ask(question: string) {
+    if (!question.trim()) return;
+    setQ(question);
+    setBusy(true);
+    setErr("");
+    setRes(null);
+    try {
+      const r = await fetch("/api/ask", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...request, question, lang: locale }) });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error ?? t.somethingWrong);
+      setRes(data);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : t.somethingWrong);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="card ask">
+      <h3>💬 {t.askTitle}</h3>
+      <p className="muted small">{t.askHint}</p>
+      <form className="askrow" onSubmit={(e) => { e.preventDefault(); ask(q); }}>
+        <input type="text" value={q} maxLength={400} placeholder={t.askPlaceholder} onChange={(e) => setQ(e.target.value)} aria-label={t.askTitle} />
+        <button className="btn" type="submit" disabled={busy || !q.trim()}>{busy ? "…" : t.askBtn}</button>
+      </form>
+      {!res && !busy && (
+        <div className="chips">
+          {t.askExamples.map((ex) => <button key={ex} type="button" className="chip" onClick={() => ask(ex)}>{ex}</button>)}
+        </div>
+      )}
+      {busy && <p className="muted small" aria-live="polite">{t.asking}</p>}
+      {err && <p className="error" role="alert">{err}</p>}
+      {res && (
+        <div className={`answer ${res.status}`} aria-live="polite">
+          {res.status === "not_covered" && <div className="small"><b>{t.askNotCovered}</b></div>}
+          {res.status === "unsupported" ? <p>{t.askUnsupported}</p> : <p className="answer-text">{res.answer}</p>}
+          {res.quotes.length > 0 && (
+            <>
+              <div className="small muted">{t.askQuotes}</div>
+              {res.quotes.map((x, i) => <blockquote key={i} lang="en">“{x.text}”</blockquote>)}
+            </>
+          )}
+          <div className="small muted">{t.askAiNote}</div>
+        </div>
+      )}
     </div>
   );
 }
@@ -105,7 +164,7 @@ function QuestionField({ q, value, onChange, t }: { q: Question; value: string; 
   );
 }
 
-export default function SchemeFlow({ scheme, questions, locale }: { scheme: Scheme; questions: Question[]; locale: Locale; optionLabels: Record<string, string> }) {
+export default function SchemeFlow({ scheme, questions, locale, optionLabels = {}, uploaded }: { scheme: Scheme; questions: Question[]; locale: Locale; optionLabels?: Record<string, string>; uploaded?: { sourceText: string; unverified: number; header?: React.ReactNode } }) {
   const t = UI[locale];
   const [answers, setAnswers] = useState<Answers>({});
   const [result, setResult] = useState<CheckResponse | null>(null);
@@ -122,11 +181,10 @@ export default function SchemeFlow({ scheme, questions, locale }: { scheme: Sche
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`/api/schemes/${scheme.id}/check`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ profile: answersToProfile(questions, answers), lang: locale }),
-      });
+      const profile = answersToProfile(questions, answers);
+      const res = uploaded
+        ? await fetch("/api/check", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ scheme, profile, lang: locale, optionLabels }) })
+        : await fetch(`/api/schemes/${scheme.id}/check`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ profile, lang: locale }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? t.somethingWrong);
       setResult(data);
@@ -143,6 +201,13 @@ export default function SchemeFlow({ scheme, questions, locale }: { scheme: Sche
 
   return (
     <div lang={locale}>
+      {uploaded && (
+        <div className="card verdict maybe small" role="note">
+          ⚠️ {t.unverifiedBanner}
+          {uploaded.unverified > 0 && <> {t.unverifiedQuotes(uploaded.unverified)}</>}
+        </div>
+      )}
+      {uploaded?.header}
       <section>
         <div className="meta muted small">{scheme.issuingAuthority}</div>
         <h1>{scheme.title}</h1>
@@ -151,7 +216,7 @@ export default function SchemeFlow({ scheme, questions, locale }: { scheme: Sche
       <div className="section-title"><span className="step-num">1</span><h2>{t.step1}</h2></div>
       <div className="card">
         <p>{scheme.summary}</p>
-        <ListenButton src={`/audio/${scheme.id}.${locale}.mp3`} text={listenText} locale={locale} t={t} />
+        <ListenButton src={uploaded ? null : `/audio/${scheme.id}.${locale}.mp3`} text={listenText} locale={locale} t={t} />
       </div>
 
       <div className="card">
@@ -166,6 +231,8 @@ export default function SchemeFlow({ scheme, questions, locale }: { scheme: Sche
           ))}
         </ul>
       </div>
+
+      <AskBox t={t} locale={locale} request={uploaded ? { scheme, sourceText: uploaded.sourceText } : { schemeId: scheme.id }} />
 
       <div className="section-title"><span className="step-num">2</span><h2>{t.step2}</h2></div>
       <form className="card" onSubmit={check}>
@@ -270,7 +337,7 @@ export default function SchemeFlow({ scheme, questions, locale }: { scheme: Sche
           {result.eligible === false && (
             <div className="card">
               <p>{t.ineligibleHelp}</p>
-              <a className="btn secondary" href={scheme.sourceUrl} target="_blank" rel="noreferrer">{t.officialDoc}</a>
+              {!isUploadedSource(scheme.sourceUrl) && <a className="btn secondary" href={scheme.sourceUrl} target="_blank" rel="noreferrer">{t.officialDoc}</a>}
             </div>
           )}
         </div>

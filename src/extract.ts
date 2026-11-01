@@ -72,7 +72,14 @@ export interface ExtractOptions {
   sourceUrl: string;
   llm: LLM;
   log?: (msg: string) => void;
+  onEvent?: (e: ExtractEvent) => void;
 }
+
+// Structured progress for the web UI
+export type ExtractEvent =
+  | { type: "attempt"; attempt: number; max: number }
+  | { type: "rejected"; attempt: number; reason: string; kind: "invalid" | "quotes" }
+  | { type: "validated"; attempt: number; clauses: number; unverified: number };
 
 export interface ExtractResult {
   scheme: Scheme;
@@ -88,6 +95,7 @@ export async function extractScheme(text: string, opts: ExtractOptions): Promise
 
   for (let attempt = 1; attempt <= MAX_RETRIES + 1; attempt++) {
     log(`LLM call ${attempt}/${MAX_RETRIES + 1}`);
+    opts.onEvent?.({ type: "attempt", attempt, max: MAX_RETRIES + 1 });
     const raw = await opts.llm(SYSTEM_PROMPT, messages);
     messages.push({ role: "assistant", content: raw });
 
@@ -97,14 +105,18 @@ export async function extractScheme(text: string, opts: ExtractOptions): Promise
       const scheme = SchemeSchema.parse({ ...obj, id: opts.id, sourceUrl: opts.sourceUrl });
       const unverifiedClauses = findUnverifiedClauses(scheme, text);
       best = { scheme, attempts: attempt, unverifiedClauses };
+      const clauses = scheme.benefits.length + scheme.eligibility.length + scheme.exclusions.length;
+      opts.onEvent?.({ type: "validated", attempt, clauses, unverified: unverifiedClauses.length });
       if (unverifiedClauses.length === 0) return best;
       feedback =
         "These sourceClause values are not exact quotes from the document. Replace each with the exact text from the document (word for word), or drop the item if the document does not support it:\n" +
         unverifiedClauses.map((c) => `- ${c.where}: "${c.sourceClause}"`).join("\n");
       lastError = `${unverifiedClauses.length} unverified source clauses`;
+      opts.onEvent?.({ type: "rejected", attempt, kind: "quotes", reason: `${unverifiedClauses.length} quote(s) not found word for word in the document` });
     } catch (err) {
       lastError = err instanceof z.ZodError ? z.prettifyError(err) : err instanceof Error ? err.message : String(err);
       feedback = `Your output was not valid. Fix these problems and return the full corrected JSON object only:\n${lastError}`;
+      opts.onEvent?.({ type: "rejected", attempt, kind: "invalid", reason: lastError.split("\n").slice(0, 2).join(" ").slice(0, 200) });
     }
     log(`  rejected: ${lastError.split("\n")[0]}`);
     messages.push({ role: "user", content: feedback });
@@ -115,25 +127,29 @@ export async function extractScheme(text: string, opts: ExtractOptions): Promise
   throw new Error(`Extraction failed after ${MAX_RETRIES + 1} attempts:\n${lastError}`);
 }
 
+export async function pdfToText(bytes: Uint8Array): Promise<{ text: string; pages: number }> {
+  const { extractText, getDocumentProxy } = await import("unpdf");
+  const pdf = await getDocumentProxy(bytes);
+  const { text } = await extractText(pdf, { mergePages: false });
+  return { text: text.map((page, i) => `--- page ${i + 1} ---\n${page}`).join("\n\n"), pages: text.length };
+}
+
 export async function loadText(path: string): Promise<string> {
   const ext = extname(path).toLowerCase();
-  if (ext === ".pdf") {
-    const { extractText, getDocumentProxy } = await import("unpdf");
-    const pdf = await getDocumentProxy(new Uint8Array(await readFile(path)));
-    const { text } = await extractText(pdf, { mergePages: false });
-    return text.map((page, i) => `--- page ${i + 1} ---\n${page}`).join("\n\n");
-  }
+  if (ext === ".pdf") return (await pdfToText(new Uint8Array(await readFile(path)))).text;
   if (ext === ".txt" || ext === ".md") return readFile(path, "utf8");
   throw new Error(`Unsupported input type "${ext}". Use a .pdf, .txt or .md file.`);
 }
 
 // Free tiers often return 429/503 under load; back off and retry before giving up
-export async function postJson(url: string, headers: Record<string, string>, body: unknown, tries = 5): Promise<Response> {
+export async function postJson(url: string, headers: Record<string, string>, body: unknown, tries = 4): Promise<Response> {
   for (let i = 1; ; i++) {
     const res = await fetch(url, { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body) });
     const retryable = res.status === 429 || res.status >= 500;
     if (res.ok || !retryable || i >= tries) return res;
-    const wait = Math.min(2000 * 2 ** (i - 1), 30000);
+    // A used-up daily quota won't recover by waiting; let the caller fall back to another model
+    if (res.status === 429 && /per ?day/i.test(await res.clone().text())) return res;
+    const wait = Math.min(2000 * 2 ** (i - 1), 15000);
     console.warn(`  API ${res.status}, retrying in ${wait / 1000}s (${i}/${tries - 1})`);
     await new Promise((r) => setTimeout(r, wait));
   }
@@ -145,40 +161,45 @@ function requireEnv(name: string): string {
   return v;
 }
 
+// EXTRACT_MODEL may list several models, comma-separated: each is tried in turn when one is busy or out of quota
 export function llmFromEnv(): LLM {
   const provider = (process.env.EXTRACT_PROVIDER ?? "anthropic").toLowerCase();
-  const model = requireEnv("EXTRACT_MODEL");
+  const models = requireEnv("EXTRACT_MODEL").split(",").map((m) => m.trim()).filter(Boolean);
+  let call: (model: string, system: string, messages: ChatMessage[]) => Promise<Response>;
+  let read: (res: Response) => Promise<string>;
 
   if (provider === "anthropic") {
     const key = requireEnv("ANTHROPIC_API_KEY");
-    return async (system, messages) => {
-      const res = await postJson(
-        "https://api.anthropic.com/v1/messages",
-        { "x-api-key": key, "anthropic-version": "2023-06-01" },
-        { model, max_tokens: 8000, system, messages },
-      );
-      if (!res.ok) throw new Error(`Anthropic API ${res.status}: ${await res.text()}`);
+    call = (model, system, messages) =>
+      postJson("https://api.anthropic.com/v1/messages", { "x-api-key": key, "anthropic-version": "2023-06-01" }, { model, max_tokens: 8000, system, messages });
+    read = async (res) => {
       const data = (await res.json()) as { content: { type: string; text?: string }[] };
       return data.content.filter((b) => b.type === "text").map((b) => b.text).join("");
     };
-  }
-
-  if (provider === "openai") {
+  } else if (provider === "openai") {
     const key = requireEnv("OPENAI_API_KEY");
     const base = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, "");
-    return async (system, messages) => {
-      const res = await postJson(
-        `${base}/chat/completions`,
-        { authorization: `Bearer ${key}` },
-        { model, messages: [{ role: "system", content: system }, ...messages], response_format: { type: "json_object" } },
-      );
-      if (!res.ok) throw new Error(`OpenAI-compatible API ${res.status}: ${await res.text()}`);
+    call = (model, system, messages) =>
+      postJson(`${base}/chat/completions`, { authorization: `Bearer ${key}` }, { model, messages: [{ role: "system", content: system }, ...messages], response_format: { type: "json_object" } });
+    read = async (res) => {
       const data = (await res.json()) as { choices: { message: { content: string | null } }[] };
       return data.choices[0]?.message.content ?? "";
     };
+  } else {
+    throw new Error(`Unknown EXTRACT_PROVIDER "${provider}". Use "anthropic" or "openai".`);
   }
 
-  throw new Error(`Unknown EXTRACT_PROVIDER "${provider}". Use "anthropic" or "openai".`);
+  return async (system, messages) => {
+    let lastError = "";
+    for (const model of models) {
+      const res = await call(model, system, messages);
+      if (res.ok) return read(res);
+      lastError = `${provider} API ${res.status} (${model}): ${await res.text()}`;
+      if (res.status !== 429 && res.status < 500) break;
+      if (models.length > 1) console.warn(`  ${model} unavailable (${res.status}), trying the next model`);
+    }
+    throw new Error(lastError);
+  };
 }
 
 function slugify(s: string): string {

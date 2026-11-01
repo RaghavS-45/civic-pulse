@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // unpdf is only used by the extraction CLI, never by the web app
   serverExternalPackages: ["unpdf"],
+  // The Q&A route reads each scheme's source text at runtime
+  outputFileTracingIncludes: {
+    "/api/ask": ["./data/text/**/*"],
+  },
 };
 
 export default nextConfig;

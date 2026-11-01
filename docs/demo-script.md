@@ -1,93 +1,89 @@
-# Demo video script (target: 2 min 40 s)
+# Demo video script (target: 2 min 50 s)
 
 **Persona:** Ramesh, 42, a self-employed tailor. He reads Hindi better than English.
-**Story:** a 60-page government PDF → Ramesh hears it explained in Hindi → finds out he qualifies, sees *why* with the official line → leaves with a document checklist and a filled-in application.
+**Story:** the AI reads a government document live → Ramesh hears his scheme explained in Hindi, asks his own question, finds out he qualifies and *why*, and leaves with a checklist and a filled-in application.
 
-The submission asks to show "real-time AI reasoning and tool usage", so the video opens with the extraction pipeline running live in the terminal, then shows the app.
+The submission asks for "real-time AI reasoning and tool usage", so the video opens with the live upload, where the progress log shows each AI step and each check.
 
 ---
 
 ## Before recording
 
-- [ ] Run the live site (or `npm run build && npm start` locally). Use a phone-sized browser window (Chrome DevTools → iPhone 12/13, 390 px wide).
-- [ ] Clear previous answers: open each scheme page fresh.
-- [ ] Terminal: large font (18+ pt), dark theme, in the project folder, `.env` filled in.
-- [ ] **Record the terminal part first, early in the day.** It uses the Gemini free tier, which can be overloaded or out of quota later. Use `gemini-3.5-flash` (about 20 seconds for a short PDF).
-- [ ] Use a demo id so you don't overwrite the verified file:
-  `EXTRACT_MODEL=gemini-3.5-flash npm run extract -- data/pdfs/atal-pension-yojana.pdf --id apy-demo --source-url "https://www.pfrda.org.in/documents/33652/307349/APY%20Subscriber%20Information%20Brochure%20English"`
-  Delete `data/schemes/apy-demo.json` and `data/text/apy-demo.txt` afterwards.
-- [ ] Check the sound is on for the Hindi narration.
+- [ ] Gemini key has quota: billing enabled, or record right after the daily reset (about 1:30 pm IST). Test one upload and one question first.
+- [ ] Use the live site in a phone-sized window (Chrome DevTools → iPhone 12/13, 390 px wide).
+- [ ] Have `atal-pension-yojana.pdf` ready to upload (2 pages, fastest). It's in `data/pdfs/`.
+- [ ] Open each page fresh so no old answers are filled in.
+- [ ] Sound on for the Hindi narration.
 
 ---
 
 ## Shot list
 
-### 1. Hook (0:00–0:15)
+### 1. Hook (0:00–0:12)
 **Screen:** the PM Vishwakarma guidelines PDF, scrolling fast through dense pages.
 
-> "This is the official guideline for PM Vishwakarma, a scheme for India's tailors, carpenters and barbers. It's 64 pages of legal English. Ramesh is a tailor. He doesn't know if he qualifies, or what to do next. We built Civic Pulse for him."
+> "Government schemes are written like this: 64 pages of legal English. The tailors and farmers they're meant for can't use them. Civic Pulse fixes that."
 
-### 2. The AI pipeline, live (0:15–0:50)
-**Screen:** terminal. Run the extract command above.
+### 2. The AI at work, live (0:12–0:50)
+**Screen:** home page → **Explain any notification** → choose `atal-pension-yojana.pdf` → **Explain this document**.
 
-> "First, the AI reads the government document once. Gemini turns the PDF into structured rules, benefits and steps."
+> "Give it any government document. The AI reads it and pulls out every rule, benefit and step."
 
-Let the output show `LLM call 1/4` → `Saved … after N attempt(s)`. If it shows a `rejected:` line, point at it:
+Let the progress log fill in: *Read 2 pages… AI is reading the rules…* If a **Rejected** line appears, point at it:
 
-> "Every rule has to quote the official document word for word. If the AI paraphrases or invents a line, our code rejects it and makes it try again."
+> "Every rule has to quote the document word for word. Here the AI got one wrong, so our code rejected it and made it try again."
 
-Open the JSON and highlight one rule with its `sourceClause`. Then run:
-`npm run verify -- atal-pension-yojana`
+When it finishes, point at the yellow banner:
 
-> "Every quote is checked against the PDF, and we hand-verify each scheme before it goes live. After that, the AI is out of the loop. Eligibility is decided by plain code."
+> "It's clearly marked as AI-extracted. The five schemes on our home page went further: each was checked by a person against the PDF."
 
-### 3. Explainer in Hindi (0:50–1:15)
-**Screen:** app home page. Tap **हिंदी**, then **पीएम विश्वकर्मा**.
+*(If the upload is slow, cut the waiting in editing.)*
 
-> "Ramesh opens the app in Hindi."
+### 3. Explainer in Hindi (0:50–1:10)
+**Screen:** home page → **हिंदी** → **पीएम विश्वकर्मा**.
 
-Tap **🔊 सुनें** and let 5–6 seconds of narration play, then stop it.
+> "Ramesh opens his scheme in Hindi."
 
-> "He can listen instead of reading. Every benefit links to its source."
+Tap **🔊 सुनें** for 5–6 seconds, then stop.
 
-Tap **स्रोत** under the ₹15,000 tool kit benefit to show the English quote.
+> "He can listen instead of reading."
 
-### 4. The check (1:15–1:55)
-**Screen:** scroll to **क्या आप आवेदन कर सकते हैं?**
+### 4. Ramesh asks his own question (1:10–1:30)
+**Screen:** the **💬 सवाल पूछें** box. Tap the example **"क्या मेरी बहन भी आवेदन कर सकती है?"**
 
-Fill in: trade **दर्जी**, age **42**, and **हाँ** for the yes/no questions. Tap **मेरी पात्रता जाँचें**.
+> "He wonders if his sister can apply too. The answer comes only from the official document, with the exact lines it relies on, and each line is checked against the PDF."
 
-> "Six simple questions. No documents uploaded, no login."
+Point at the quoted English line under the answer.
 
-The result: **✅ आप आवेदन कर सकते हैं** · "6 में से 6 शर्तें पूरी".
-Point at the bar *"आपके जवाब → सरकारी PDF के 6 नियम → कोड से जाँचा गया, AI का अंदाज़ा नहीं"*.
+### 5. The check (1:30–2:05)
+**Screen:** scroll to **क्या आप आवेदन कर सकते हैं?** Trade **दर्जी**, age **42**, **हाँ** for the yes/no questions → **मेरी पात्रता जाँचें**.
 
-> "The verdict comes from code, not an AI guess. Each condition shows the rule, Ramesh's answer, and the exact line from the government document."
+Result: **✅ आप आवेदन कर सकते हैं** · "6 में से 6 शर्तें पूरी". Point at *"कोड से जाँचा गया, AI का अंदाज़ा नहीं"*.
 
-Expand **स्रोत** on the age rule.
+> "Eligibility is decided by plain code, not an AI guess. Each condition shows the rule, his answer and the official line."
 
-### 5. What changes the answer (1:55–2:15)
-Scroll back up. Change **"आप या आपके परिवार का कोई भी सदस्य सरकारी नौकरी में न हो"** to **नहीं**. Check again.
+Change **"आप या आपके परिवार का कोई भी सदस्य सरकारी नौकरी में न हो"** to **नहीं** → check again → **❌**.
 
-> "If his wife had a government job, the answer changes, and Ramesh sees exactly which rule and which official line caused it."
+> "If his wife had a government job, he'd see exactly which rule rules him out."
 
-Show **❌ आप पात्र नहीं हैं** with the one failed rule. Change it back to **हाँ** and check again.
+Change it back and check again.
 
-### 6. Action plan (2:15–2:35)
+### 6. Action plan (2:05–2:30)
 Scroll to **आपकी कार्य योजना**.
 
-> "Then, what to actually do: the documents to keep ready, the steps, the official portal, and an application already filled in from his answers. He just adds his name and mobile number."
+> "Then what to actually do: documents to keep ready, the steps, the official portal, and an application already filled in from his answers."
 
-Tick two checklist items, scroll through the draft application, tap **टेक्स्ट कॉपी करें**.
+Tick two checklist items, scroll the draft, tap **टेक्स्ट कॉपी करें**.
 
-### 7. Close (2:35–2:45)
-**Screen:** home page in Hindi showing all five schemes.
+### 7. Close (2:30–2:50)
+**Screen:** Hindi home page showing all five schemes.
 
-> "Five real schemes: for artisans, farmers, workers, daughters and students. In English and Hindi, every rule cited from the official source. Adding a scheme or a language takes minutes. Civic Pulse, by Team Codesh."
+> "Five verified schemes for artisans, farmers, workers, daughters and students. Any other notification, live. English and Hindi, every answer quoted from the official source. Civic Pulse, by Team Codesh."
 
 ---
 
-## Backup lines if something breaks
+## Backup if something breaks
 
-- **Extraction is slow or fails live:** cut to a pre-recorded terminal clip, or show `npm run verify -- pm-vishwakarma` (works offline) and say "this one took about two minutes to extract."
-- **Audio doesn't play:** "Each scheme has narration in both languages", then move on.
+- **Upload says the AI is busy or out of quota:** wait a minute and retry, or cut to a recording made earlier.
+- **A question fails:** move on. The rest of the demo doesn't need the AI.
+- **Audio doesn't play:** "Every scheme has narration in both languages", then move on.
