@@ -2,7 +2,7 @@
 
 **Team Codesh** · Civic Pulse track (Digital Governance & Public Information) · Problem: *Multilingual Policy, Rights & Scheme Explainer*
 
-**Live demo:** https://civic-pulse-codesh.vercel.app · **Demo video:** _add link here_
+**Live demo:** https://civic-pulse-codesh.vercel.app · **Demo video:** https://drive.google.com/file/d/10OUXGIpP2k2q98nZCIO2XlCl6npGZrv7/view?usp=sharing
 
 Government schemes are written in dense legal English. The people they are meant for (farmers, artisans, students, daily-wage workers) often can't read them, don't know if they qualify, and don't know what to do next.
 
