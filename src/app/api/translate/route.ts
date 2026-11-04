@@ -4,7 +4,7 @@ import { translateScheme } from "@/translate";
 import { SchemeSchema } from "@/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 // POST { scheme } -> Hindi translation of an uploaded scheme's display text (rules and quotes unchanged)
 export async function POST(req: Request) {

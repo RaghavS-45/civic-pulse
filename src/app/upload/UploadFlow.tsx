@@ -93,8 +93,8 @@ export default function UploadFlow({ locale }: { locale: Locale }) {
     setTranslating(true);
     try {
       const res = await fetch("/api/translate", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ scheme: result.scheme }) });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? t.somethingWrong);
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data) throw new Error(data?.error ?? t.aiSlow);
       setHindi(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : t.somethingWrong);

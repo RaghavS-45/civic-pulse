@@ -91,8 +91,9 @@ function AskBox({ t, locale, request }: { t: UIStrings; locale: Locale; request:
     setRes(null);
     try {
       const r = await fetch("/api/ask", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...request, question, lang: locale }) });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error ?? t.somethingWrong);
+      // A timed-out function returns a plain-text page, not JSON
+      const data = await r.json().catch(() => null);
+      if (!r.ok || !data) throw new Error(data?.error ?? t.aiSlow);
       setRes(data);
     } catch (e) {
       setErr(e instanceof Error ? e.message : t.somethingWrong);
@@ -185,8 +186,8 @@ export default function SchemeFlow({ scheme, questions, locale, optionLabels = {
       const res = uploaded
         ? await fetch("/api/check", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ scheme, profile, lang: locale, optionLabels }) })
         : await fetch(`/api/schemes/${scheme.id}/check`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ profile, lang: locale }) });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? t.somethingWrong);
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data) throw new Error(data?.error ?? t.somethingWrong);
       setResult(data);
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     } catch (err) {

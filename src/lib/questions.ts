@@ -47,8 +47,8 @@ export function buildQuestions(scheme: Scheme, locale: Locale = "en", optionLabe
         break;
       case "occupation": {
         const values = scheme.eligibility
-          .filter((r) => r.field === "occupation" && r.operator === "in" && Array.isArray(r.value))
-          .flatMap((r) => r.value as (string | number | boolean)[])
+          .filter((r) => r.field === "occupation" && (r.operator === "in" || r.operator === "eq"))
+          .flatMap((r) => (Array.isArray(r.value) ? r.value : [r.value]))
           .map(String);
         out.push(
           values.length
@@ -60,6 +60,9 @@ export function buildQuestions(scheme: Scheme, locale: Locale = "en", optionLabe
       case "other":
         if (typeof rule.value === "boolean") out.push({ id, kind: "confirm", prompt: rule.label ?? rule.key ?? "", required: rule.value });
         else if (typeof rule.value === "number") out.push({ id, kind: "number", prompt: rule.label ?? rule.key ?? "", hint: t.enterNumber });
+        // Free text never matches an exact rule value, so offer the value as a choice
+        else if (rule.operator === "eq" && typeof rule.value === "string")
+          out.push({ id, kind: "select", prompt: rule.label ?? rule.key ?? "", options: [{ value: rule.value, label: optionLabels[rule.value] ?? titleCase(rule.value) }, { value: "none of these", label: t.noneOfThese }] });
         else out.push({ id, kind: "text", prompt: rule.label ?? rule.key ?? "" });
         break;
     }

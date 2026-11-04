@@ -6,7 +6,7 @@ import { rateLimited, readSourceText, serverLLM } from "@/lib/server-ai";
 import { SchemeSchema } from "@/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 // POST { question, lang, schemeId } for a verified scheme, or { question, lang, scheme, sourceText } for an uploaded one.
 // The answer must quote the official text; quotes are checked word for word before they are returned.
